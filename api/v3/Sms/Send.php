@@ -60,7 +60,8 @@ function civicrm_api3_sms_send($params) {
     $from_contact_id = $params['from_contact_id'];
   }
 
-  $return = CRM_Activity_BAO_Activity::sendSMS($contactDetails, $activityParams, $smsParams, array($contactId), $from_contact_id);
+  $contactIds = array($contactId);
+  $return = CRM_Activity_BAO_Activity::sendSMS($contactDetails, $activityParams, $smsParams, $contactIds, $from_contact_id);
   
   $returnValues = array();
   return civicrm_api3_create_success($returnValues, $params, 'Sms', 'Send');
