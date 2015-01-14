@@ -26,6 +26,11 @@ function _civicrm_api3_sms_send_spec(&$spec) {
 function civicrm_api3_sms_send($params) {
   $messageTemplates = new CRM_Core_DAO_MessageTemplates();
   $messageTemplates->id = $params['template_id'];
+  
+  if (!$messageTemplates->find(TRUE)) {
+    throw new API_Exception('Could not find template with ID: '.$params['template_id']);
+  }
+  
   $contactId = $params['contact_id'];
 
   $returnProperties = array(
