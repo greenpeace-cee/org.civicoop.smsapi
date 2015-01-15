@@ -51,9 +51,9 @@ function civicrm_api3_sms_send($params) {
   if (!$phone->fetch()) {
     throw new API_Exception('Suppressed sending sms to: '.$contactDetails[$contactId]['display_name']);
   }
-  $contactDetails[$contact_id]['phone_id'] = $phone->id;
-  $contactDetails[$contact_id]['phone'] = $phone->phone;
-  $contactDetails[$contact_id]['phone_type_id'] = CRM_Utils_Array::value('Mobile', $phoneTypes);
+  $contactDetails[$contactId]['phone_id'] = $phone->id;
+  $contactDetails[$contactId]['phone'] = $phone->phone;
+  $contactDetails[$contactId]['phone_type_id'] = CRM_Utils_Array::value('Mobile', $phoneTypes);
 
   $activityParams['html_message'] = $messageTemplates->html_text;
   $activityParams['text_message'] = $messageTemplates->msg_text;
