@@ -26,6 +26,6 @@
     Original developed by http://civicoop.org. Contributed by http://www.ixiam.com
   </comments>
   <civix>
-    <namespace>CRM/Emailapi</namespace>
+    <namespace>CRM/Smsapi</namespace>
   </civix>
 </extension>
