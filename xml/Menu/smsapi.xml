@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/civirules/actions/smsapi</path>
+    <page_callback>CRM_Smsapi_Form_CivirulesAction</page_callback>
+    <title>CivirulesAction</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
