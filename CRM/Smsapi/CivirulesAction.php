@@ -64,6 +64,7 @@ class CRM_Smsapi_CivirulesAction extends CRM_CivirulesActions_Generic_Api {
    */
   public function userFriendlyConditionParams() {
     $template = 'unknown template';
+    $providerName = 'unknown provider';
     $params = $this->getActionParameters();
     $version = CRM_Core_BAO_Domain::version();
     // Compatibility with CiviCRM > 4.3
@@ -72,14 +73,19 @@ class CRM_Smsapi_CivirulesAction extends CRM_CivirulesActions_Generic_Api {
     } else {
       $messageTemplates = new CRM_Core_DAO_MessageTemplates();
     }
-    $messageTemplates->id = $params['template_id'];
-    $messageTemplates->is_active = true;
-    if ($messageTemplates->find(TRUE)) {
-      $template = $messageTemplates->msg_title;
+    if (isset($params['template_id'])) {
+      $messageTemplates->id = $params['template_id'];
+      $messageTemplates->is_active = true;
+      if ($messageTemplates->find(TRUE)) {
+        $template = $messageTemplates->msg_title;
+      }
     }
-    $providerInfo = CRM_SMS_BAO_Provider::getProviderInfo($params['provider_id']);
+    if (isset($params['provider_id'])) {
+      $providerInfo = CRM_SMS_BAO_Provider::getProviderInfo($params['provider_id']);
+      $providerName = $providerInfo['title'];
+    }
     return ts('Send SMS with provider "%1" with template "%2"', array(
-        1=>$providerInfo['title'],
+        1=>$providerName,
         2=>$template
     ));
   }

@@ -57,6 +57,13 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
     asort($messageTemplates);
     return $messageTemplates;
   }
+
+  /**
+   * Method to get the SMS providers
+   *
+   * @return array $smsProviders
+   * @access protected
+   */
   protected function getSmsProviders() {
     $smsProviders = array();
     $query = 'SELECT id, title FROM civicrm_sms_provider WHERE is_active = %1';
