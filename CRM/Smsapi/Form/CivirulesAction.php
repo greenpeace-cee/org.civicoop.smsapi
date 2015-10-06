@@ -101,7 +101,7 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
     $defaultValues = array();
     $defaultValues['rule_action_id'] = $this->ruleActionId;
     if (!empty($this->ruleAction->action_params)) {
-      $data = unserialize($this->ruleCondition->action_params);
+      $data = unserialize($this->ruleAction->action_params);
     }
     if (!empty($data['provider_id'])) {
       $defaultValues['provider_id'] = $data['provider_id'];
