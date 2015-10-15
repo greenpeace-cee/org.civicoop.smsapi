@@ -84,9 +84,16 @@ class CRM_Smsapi_CivirulesAction extends CRM_CivirulesActions_Generic_Api {
       $providerInfo = CRM_SMS_BAO_Provider::getProviderInfo($params['provider_id']);
       $providerName = $providerInfo['title'];
     }
-    return ts('Send SMS with provider "%1" with template "%2"', array(
+
+    $to = ts('the contact');
+    if (!empty($params['alternative_receiver_phone_number'])) {
+      $to = $params['alternative_receiver_phone_number'];
+    }
+
+    return ts('Send SMS with provider "%1" with template "%2" to %3', array(
         1=>$providerName,
-        2=>$template
+        2=>$template,
+        3=>$to
     ));
   }
 }

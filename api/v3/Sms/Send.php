@@ -29,6 +29,7 @@ function civicrm_api3_sms_send($params) {
     throw new API_Exception('Parameter contact_id must be a unique id or a list of ids separated by comma');
   }
   $contactIds = explode(",", $params['contact_id']);
+  $alternativePhoneNumber = !empty($params['alternative_receiver_phone_number']) ? $params['alternative_receiver_phone_number'] : false;
 
   // Compatibility with CiviCRM > 4.3
   if($version >= 4.4) {
@@ -54,15 +55,20 @@ function civicrm_api3_sms_send($params) {
 
     //to check if the phone type is "Mobile"
     $phoneTypes = CRM_Core_OptionGroup::values('phone_type', TRUE, FALSE, FALSE, NULL, 'name');
-    $phone = CRM_Core_DAO::executeQuery('SELECT * FROM civicrm_phone WHERE phone_type_id = %1 AND contact_id = %2', array(
+    if ($alternativePhoneNumber) {
+      $contactDetails[$contactId]['phone_id'] = 0;
+      $contactDetails[$contactId]['phone'] = $alternativePhoneNumber;
+    } else {
+      $phone = CRM_Core_DAO::executeQuery('SELECT * FROM civicrm_phone WHERE phone_type_id = %1 AND contact_id = %2', array(
         1 => array(CRM_Utils_Array::value('Mobile', $phoneTypes), 'Integer'),
         2 => array($contactId, 'Integer'),
-    ));
-    if (!$phone->fetch()) {
-      throw new API_Exception('Suppressed sending sms to: ' . $contactDetails[$contactId]['display_name']);
+      ));
+      if (!$phone->fetch()) {
+        throw new API_Exception('Suppressed sending sms to: ' . $contactDetails[$contactId]['display_name']);
+      }
+      $contactDetails[$contactId]['phone_id'] = $phone->id;
+      $contactDetails[$contactId]['phone'] = $phone->phone;
     }
-    $contactDetails[$contactId]['phone_id'] = $phone->id;
-    $contactDetails[$contactId]['phone'] = $phone->phone;
     $contactDetails[$contactId]['phone_type_id'] = CRM_Utils_Array::value('Mobile', $phoneTypes);
 
     $activityParams['html_message'] = $messageTemplates->msg_html;
