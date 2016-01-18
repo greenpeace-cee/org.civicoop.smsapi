@@ -16,4 +16,6 @@ if (_smsapi_is_civirules_installed()) {
           ),
       ),
   );
+} else {
+  return array();
 }
