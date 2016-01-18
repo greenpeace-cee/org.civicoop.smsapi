@@ -73,6 +73,7 @@ function civicrm_api3_sms_send($params) {
 
     $activityParams['html_message'] = $messageTemplates->msg_html;
     $activityParams['text_message'] = $messageTemplates->msg_text;
+    $activityParams['sms_text_message'] = $messageTemplates->msg_text;
     $activityParams['activity_subject'] = $messageTemplates->msg_subject;
     $smsParams['provider_id'] = $params['provider_id'];
 
