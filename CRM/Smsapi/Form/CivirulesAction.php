@@ -47,7 +47,7 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
    */
   protected function getMessageTemplates() {
     $messageTemplates = array();
-    $query = 'SELECT id, msg_title FROM civicrm_msg_template WHERE is_active = %1 AND workflow_id IS NULL';
+    $query = 'SELECT id, msg_title FROM civicrm_msg_template WHERE is_active = %1 AND workflow_id IS NULL ORDER BY msg_title';
     $params = array(1 => array(1, 'Integer'));
     $dao = CRM_Core_DAO::executeQuery($query, $params);
     while ($dao->fetch()) {
