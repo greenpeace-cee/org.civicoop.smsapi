@@ -112,17 +112,17 @@ function smsapi_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  *
  * @return bool
  */
-function _smsapi_is_civirules_installed()
-{
+function _smsapi_is_civirules_installed() {
   $installed = FALSE;
   try {
-    $extensions = civicrm_api3('Extension', 'get');
+    $extensions = civicrm_api3('Extension', 'get', array('options' => array('limit' => 0)));
     foreach ($extensions['values'] as $ext) {
       if ($ext['key'] == 'org.civicoop.civirules' && $ext['status'] == 'installed') {
         $installed = TRUE;
       }
     }
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     $installed = FALSE;
   }
   return $installed;
