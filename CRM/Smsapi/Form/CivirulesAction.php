@@ -84,6 +84,7 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
     $this->add('hidden', 'rule_action_id');
     $this->add('select', 'template_id', ts('Message template'), $this->getMessageTemplates(), true);
     $this->add('select', 'provider_id', ts('SMS Provider'), $this->getSmsProviders(), true);
+    $this->addEntityRef('from_contact_id', ts('Message Sender'));
     $this->add('checkbox','alternative_receiver', ts('Send to alternative phone number'));
     $this->add('text', 'alternative_receiver_phone_number', ts('Send to'));
 
@@ -111,6 +112,7 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
     if (!empty($data['template_id'])) {
       $defaultValues['template_id'] = $data['template_id'];
     }
+    $defaultValues['from_contact_id'] = $data['from_contact_id'] ?? NULL;
     if (!empty($data['alternative_receiver_phone_number'])) {
       $defaultValues['alternative_receiver_phone_number'] = $data['alternative_receiver_phone_number'];
       $defaultValues['alternative_receiver'] = true;
@@ -126,6 +128,7 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
   public function postProcess() {
     $data['provider_id'] = $this->_submitValues['provider_id'];
     $data['template_id'] = $this->_submitValues['template_id'];
+    $data['from_contact_id'] = $this->_submitValues['from_contact_id'] ?? CRM_Core_Session::getLoggedInContactID() ?? NULL;
     $data['alternative_receiver_phone_number'] = '';
     if (!empty($this->_submitValues['alternative_receiver_phone_number'])) {
       $data['alternative_receiver_phone_number'] = $this->_submitValues['alternative_receiver_phone_number'];
