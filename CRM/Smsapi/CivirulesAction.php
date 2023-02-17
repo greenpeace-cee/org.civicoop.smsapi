@@ -39,6 +39,9 @@ class CRM_Smsapi_CivirulesAction extends CRM_CivirulesActions_Generic_Api {
   protected function alterApiParameters($parameters, CRM_Civirules_TriggerData_TriggerData $triggerData) {
     //this method could be overridden in subclasses to alter parameters to meet certain criteria
     $parameters['contact_id'] = $triggerData->getContactId();
+    if($triggerData->getEntity()=='Activity'){
+      $parameters['activity_id'] = $triggerData->getEntityId();
+    }
     return $parameters;
   }
 
@@ -56,7 +59,7 @@ class CRM_Smsapi_CivirulesAction extends CRM_CivirulesActions_Generic_Api {
   }
 
   /**
-   * Returns a user friendly text explaining the condition params
+   * Returns a user-friendly text explaining the condition params
    * e.g. 'Older than 65'
    *
    * @return string
@@ -66,13 +69,7 @@ class CRM_Smsapi_CivirulesAction extends CRM_CivirulesActions_Generic_Api {
     $template = 'unknown template';
     $providerName = 'unknown provider';
     $params = $this->getActionParameters();
-    $version = CRM_Core_BAO_Domain::version();
-    // Compatibility with CiviCRM > 4.3
-    if($version >= 4.4) {
-      $messageTemplates = new CRM_Core_DAO_MessageTemplate();
-    } else {
-      $messageTemplates = new CRM_Core_DAO_MessageTemplates();
-    }
+    $messageTemplates = new CRM_Core_DAO_MessageTemplate();
     if (isset($params['template_id'])) {
       $messageTemplates->id = $params['template_id'];
       $messageTemplates->is_active = true;
