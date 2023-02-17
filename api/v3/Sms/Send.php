@@ -31,27 +31,15 @@ function civicrm_api3_sms_send($params) {
   $contactIds = explode(",", $params['contact_id']);
   $alternativePhoneNumber = !empty($params['alternative_receiver_phone_number']) ? $params['alternative_receiver_phone_number'] : false;
 
-  // Compatibility with CiviCRM > 4.3
-  if($version >= 4.4) {
-    $messageTemplates = new CRM_Core_DAO_MessageTemplate();
-  } else {
-    $messageTemplates = new CRM_Core_DAO_MessageTemplates();
-  }
+  $messageTemplates = new CRM_Core_DAO_MessageTemplate();
   $messageTemplates->id = $params['template_id'];
-  
+
   if (!$messageTemplates->find(TRUE)) {
     throw new API_Exception('Could not find template with ID: '.$params['template_id']);
   }
-  
+
   foreach($contactIds as $contactId) {
-    $returnProperties = array(
-        'sort_name' => 1,
-        'phone' => 1,
-        'do_not_sms' => 1,
-        'is_deceased' => 1,
-        'display_name' => 1,
-    );
-    list($contactDetails) = CRM_Utils_Token::getTokenDetails(array($contactId), $returnProperties, FALSE, FALSE);
+    $contactDetails[$contactId]['contact_id'] = $contactId;
 
     //to check if the phone type is "Mobile"
     $phoneTypes = CRM_Core_OptionGroup::values('phone_type', TRUE, FALSE, FALSE, NULL, 'name');
