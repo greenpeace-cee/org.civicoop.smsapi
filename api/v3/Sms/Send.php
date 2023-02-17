@@ -24,8 +24,7 @@ function _civicrm_api3_sms_send_spec(&$spec) {
  * @throws API_Exception
  */
 function civicrm_api3_sms_send($params) {
-  $version = CRM_Core_BAO_Domain::version();
-  if (!preg_match('/[0-9]+(,[0-9]+)*/i', $params['contact_id'])) {
+  if (!CRM_Utils_Type::validate($params['contact_id'], 'CommaSeparatedIntegers')) {
     throw new API_Exception('Parameter contact_id must be a unique id or a list of ids separated by comma');
   }
   $contactIds = explode(",", $params['contact_id']);
