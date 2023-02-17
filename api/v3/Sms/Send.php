@@ -1,5 +1,7 @@
 <?php
 
+use  CRM_Smsapi_ExtensionUtil as E;
+
 /**
  * Sms.Send API specification (optional)
  * This is used for documentation and validation.
@@ -9,9 +11,34 @@
  * @see http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
  */
 function _civicrm_api3_sms_send_spec(&$spec) {
-  $spec['contact_id']['api.required'] = 1;
-  $spec['template_id']['api.required'] = 1;
-  $spec['provider_id']['api.required'] = 1;
+  $spec['contact_id'] = [
+    'title' => 'Contact ID',
+    'api.required' => 1,
+  ];
+  $spec['template_id'] = [
+    'title' => 'Template ID',
+    'type' => CRM_Utils_Type::T_INT,
+    'api.required' => 1,
+  ];
+  $spec['provider_id'] = [
+    'title' => 'Provider ID',
+    'type' => CRM_Utils_Type::T_INT,
+    'api.required' => 1,
+  ];
+  $spec['activity_id'] = [
+    'title' => 'Activity ID',
+    'type' => CRM_Utils_Type::T_INT,
+  ];
+  $spec['smarty'] = [
+    'title' => 'Smarty',
+    'type' => CRM_Utils_Type::T_STRING,
+    'api.multiple' => 0,
+    'options' => [
+      'use' => E::ts('Use Smarty'),
+      'disable' => E::ts('Disable Smarty'),
+      'settings' => E::ts('Use standard settings')
+    ]
+  ];
 }
 
 /**
@@ -24,34 +51,24 @@ function _civicrm_api3_sms_send_spec(&$spec) {
  * @throws API_Exception
  */
 function civicrm_api3_sms_send($params) {
-  $version = CRM_Core_BAO_Domain::version();
-  if (!preg_match('/[0-9]+(,[0-9]+)*/i', $params['contact_id'])) {
+  if (!CRM_Utils_Type::validate($params['contact_id'], 'CommaSeparatedIntegers')) {
     throw new API_Exception('Parameter contact_id must be a unique id or a list of ids separated by comma');
+  }
+  if(empty( $params['smarty'] )) {
+    $params['smarty'] = 'settings';
   }
   $contactIds = explode(",", $params['contact_id']);
   $alternativePhoneNumber = !empty($params['alternative_receiver_phone_number']) ? $params['alternative_receiver_phone_number'] : false;
 
-  // Compatibility with CiviCRM > 4.3
-  if($version >= 4.4) {
-    $messageTemplates = new CRM_Core_DAO_MessageTemplate();
-  } else {
-    $messageTemplates = new CRM_Core_DAO_MessageTemplates();
-  }
+  $messageTemplates = new CRM_Core_DAO_MessageTemplate();
   $messageTemplates->id = $params['template_id'];
-  
+
   if (!$messageTemplates->find(TRUE)) {
     throw new API_Exception('Could not find template with ID: '.$params['template_id']);
   }
-  
+
   foreach($contactIds as $contactId) {
-    $returnProperties = array(
-        'sort_name' => 1,
-        'phone' => 1,
-        'do_not_sms' => 1,
-        'is_deceased' => 1,
-        'display_name' => 1,
-    );
-    list($contactDetails) = CRM_Utils_Token::getTokenDetails(array($contactId), $returnProperties, FALSE, FALSE);
+    $contactDetails[$contactId]['contact_id'] = $contactId;
 
     //to check if the phone type is "Mobile"
     $phoneTypes = CRM_Core_OptionGroup::values('phone_type', TRUE, FALSE, FALSE, NULL, 'name');
@@ -70,11 +87,17 @@ function civicrm_api3_sms_send($params) {
       $contactDetails[$contactId]['phone'] = $phone->phone;
     }
     $contactDetails[$contactId]['phone_type_id'] = CRM_Utils_Array::value('Mobile', $phoneTypes);
+    $message['messageSubject'] = (empty($params['subject']) ? $messageTemplates->msg_subject : $params['subject']);
+    $message['text'] = $messageTemplates->msg_text ?? CRM_Utils_String::htmlToText($messageTemplates->msg_html);
+    $message['html'] = $messageTemplates->msg_html;
+    $message_params = $params;
+    $message_params['contact_id'] = $contactId;
+    ['messageSubject' => $messageSubject, 'html' => $html, 'text' => $text] = CRM_Smsapi_Utils_Tokens::replaceTokens($contactId, $message, $message_params);
 
-    $activityParams['html_message'] = $messageTemplates->msg_html;
-    $activityParams['text_message'] = $messageTemplates->msg_text;
-    $activityParams['sms_text_message'] = $messageTemplates->msg_text;
-    $activityParams['activity_subject'] = $messageTemplates->msg_subject;
+    $activityParams['html_message'] = $html;
+    $activityParams['text_message'] = $text;
+    $activityParams['sms_text_message'] = $text;
+    $activityParams['activity_subject'] = $messageSubject;
     $smsParams['provider_id'] = $params['provider_id'];
 
     $from_contact_id = null;

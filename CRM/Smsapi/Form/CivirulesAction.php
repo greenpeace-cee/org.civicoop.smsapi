@@ -2,6 +2,8 @@
 
 require_once 'CRM/Core/Form.php';
 
+use CRM_Smsapi_ExtensionUtil as E;
+
 /**
  * Form controller class
  *
@@ -85,6 +87,13 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
     $this->add('select', 'template_id', ts('Message template'), $this->getMessageTemplates(), true);
     $this->add('select', 'provider_id', ts('SMS Provider'), $this->getSmsProviders(), true);
     $this->addEntityRef('from_contact_id', ts('Message Sender'));
+    $this->add('select', 'smarty', E::ts('Smarty'),
+      [
+        'use' => E::ts('Use Smarty'),
+        'disable' => E::ts('Disable Smarty'),
+        'settings' => E::ts('Use standard settings'),
+      ]
+    );
     $this->add('checkbox','alternative_receiver', ts('Send to alternative phone number'));
     $this->add('text', 'alternative_receiver_phone_number', ts('Send to'));
 
@@ -117,6 +126,11 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
       $defaultValues['alternative_receiver_phone_number'] = $data['alternative_receiver_phone_number'];
       $defaultValues['alternative_receiver'] = true;
     }
+    if (!empty($data['smarty'])) {
+      $defaultValues['smarty'] = $data['smarty'];
+    } else {
+      $defaultValues['smarty'] = 'settings';
+    }
     return $defaultValues;
   }
 
@@ -133,6 +147,7 @@ class CRM_Smsapi_Form_CivirulesAction extends CRM_Core_Form {
     if (!empty($this->_submitValues['alternative_receiver_phone_number'])) {
       $data['alternative_receiver_phone_number'] = $this->_submitValues['alternative_receiver_phone_number'];
     }
+    $data['smarty'] = $this->_submitValues['smarty'] ?? 'settings';
 
     $ruleAction = new CRM_Civirules_BAO_RuleAction();
     $ruleAction->id = $this->ruleActionId;
