@@ -70,11 +70,17 @@ function civicrm_api3_sms_send($params) {
       $contactDetails[$contactId]['phone'] = $phone->phone;
     }
     $contactDetails[$contactId]['phone_type_id'] = CRM_Utils_Array::value('Mobile', $phoneTypes);
+    $message['messageSubject'] = (empty($params['subject']) ? $messageTemplates->msg_subject : $params['subject']);
+    $message['text'] = $messageTemplates->msg_text ?? CRM_Utils_String::htmlToText($messageTemplates->msg_html);
+    $message['html'] = $messageTemplates->msg_html;
+    $message_params = $params;
+    $message_params['contact_id'] = $contactId;
+    ['messageSubject' => $messageSubject, 'html' => $html, 'text' => $text] = CRM_Smsapi_Utils_Tokens::replaceTokens($contactId, $message, $message_params);
 
-    $activityParams['html_message'] = $messageTemplates->msg_html;
-    $activityParams['text_message'] = $messageTemplates->msg_text;
-    $activityParams['sms_text_message'] = $messageTemplates->msg_text;
-    $activityParams['activity_subject'] = $messageTemplates->msg_subject;
+    $activityParams['html_message'] = $html;
+    $activityParams['text_message'] = $text;
+    $activityParams['sms_text_message'] = $text;
+    $activityParams['activity_subject'] = $messageSubject;
     $smsParams['provider_id'] = $params['provider_id'];
 
     $from_contact_id = null;
