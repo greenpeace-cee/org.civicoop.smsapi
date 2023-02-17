@@ -30,6 +30,11 @@
     <div class="content">{$form.alternative_receiver_phone_number.html}</div>
     <div class="clear"></div>
   </div>
+  <div class="crm-section">
+    <div class="label">{$form.smarty.label}</div>
+    <div class="content">{$form.smarty.html}</div>
+    <div class="clear"></div>
+  </div>
 </div>
 <div class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="bottom"}
