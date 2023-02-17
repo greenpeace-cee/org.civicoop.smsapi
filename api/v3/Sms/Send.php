@@ -1,5 +1,7 @@
 <?php
 
+use  CRM_Smsapi_ExtensionUtil as E;
+
 /**
  * Sms.Send API specification (optional)
  * This is used for documentation and validation.
@@ -9,9 +11,34 @@
  * @see http://wiki.civicrm.org/confluence/display/CRM/API+Architecture+Standards
  */
 function _civicrm_api3_sms_send_spec(&$spec) {
-  $spec['contact_id']['api.required'] = 1;
-  $spec['template_id']['api.required'] = 1;
-  $spec['provider_id']['api.required'] = 1;
+  $spec['contact_id'] = [
+    'title' => 'Contact ID',
+    'api.required' => 1,
+  ];
+  $spec['template_id'] = [
+    'title' => 'Template ID',
+    'type' => CRM_Utils_Type::T_INT,
+    'api.required' => 1,
+  ];
+  $spec['provider_id'] = [
+    'title' => 'Provider ID',
+    'type' => CRM_Utils_Type::T_INT,
+    'api.required' => 1,
+  ];
+  $spec['activity_id'] = [
+    'title' => 'Activity ID',
+    'type' => CRM_Utils_Type::T_INT,
+  ];
+  $spec['smarty'] = [
+    'title' => 'Smarty',
+    'type' => CRM_Utils_Type::T_STRING,
+    'api.multiple' => 0,
+    'options' => [
+      'use' => E::ts('Use Smarty'),
+      'disable' => E::ts('Disable Smarty'),
+      'settings' => E::ts('Use standard settings')
+    ]
+  ];
 }
 
 /**
@@ -26,6 +53,9 @@ function _civicrm_api3_sms_send_spec(&$spec) {
 function civicrm_api3_sms_send($params) {
   if (!CRM_Utils_Type::validate($params['contact_id'], 'CommaSeparatedIntegers')) {
     throw new API_Exception('Parameter contact_id must be a unique id or a list of ids separated by comma');
+  }
+  if(empty( $params['smarty'] )) {
+    $params['smarty'] = 'settings';
   }
   $contactIds = explode(",", $params['contact_id']);
   $alternativePhoneNumber = !empty($params['alternative_receiver_phone_number']) ? $params['alternative_receiver_phone_number'] : false;
