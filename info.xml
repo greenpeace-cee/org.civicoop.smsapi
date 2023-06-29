@@ -23,6 +23,9 @@
   <comments>
     Original developed by http://civicoop.org. Contributed by http://www.ixiam.com
   </comments>
+  <classloader>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
   <civix>
     <namespace>CRM/Smsapi</namespace>
   </civix>
