@@ -29,6 +29,14 @@ function _civicrm_api3_sms_send_spec(&$spec) {
     'title' => 'Activity ID',
     'type' => CRM_Utils_Type::T_INT,
   ];
+  $spec['from_contact_id'] = [
+    'title' => 'From Contact ID',
+    'type' => CRM_Utils_Type::T_INT,
+  ];
+  $spec['alternative_receiver_phone_number'] = [
+    'title' => 'Alternative Receiver Phone Number',
+    'type' => CRM_Utils_Type::T_STRING,
+  ];
   $spec['smarty'] = [
     'title' => 'Smarty',
     'type' => CRM_Utils_Type::T_STRING,
