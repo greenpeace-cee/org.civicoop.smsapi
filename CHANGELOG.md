@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## Version 1.7-dev (not released yet)
+
 ## Version 1.6
 
 - Use the same token replacement mechanism as the email api.
