@@ -13,20 +13,24 @@ class CRM_Smsapi_Upgrader extends CRM_Smsapi_Upgrader_Base {
    * Add CiviRule Action when installing
    */
   public function install() {
-    $this->executeSqlFile('sql/insertSendSMSAction.sql');
+    if (civicrm_api3('Extension', 'get', ['full_name' => 'org.civicoop.civirules', 'status' => 'installed'])['count']) {
+      $this->executeSqlFile('sql/insertSendSMSAction.sql');
+    }
   }
 
   /**
    * remove managed entity
    */
   public function upgrade_1001() {
-    $this->ctx->log->info('Applying update 1001 (remove managed entity');
-    if (CRM_Core_DAO::checkTableExists('civicrm_managed')) {
-      $query = 'DELETE FROM civicrm_managed WHERE module = %1 AND entity_type = %2';
-      CRM_Core_DAO::executeQuery($query, array(
-        1 => array('org.civicoop.smsapi', 'String'),
-        2 => array('CiviRuleAction', 'String'),
-      ));
+    if (civicrm_api3('Extension', 'get', ['full_name' => 'org.civicoop.civirules', 'status' => 'installed'])['count']) {
+      $this->ctx->log->info('Applying update 1001 (remove managed entity');
+      if (CRM_Core_DAO::checkTableExists('civicrm_managed')) {
+        $query = 'DELETE FROM civicrm_managed WHERE module = %1 AND entity_type = %2';
+        CRM_Core_DAO::executeQuery($query, [
+          1 => ['org.civicoop.smsapi', 'String'],
+          2 => ['CiviRuleAction', 'String'],
+        ]);
+      }
     }
     return TRUE;
   }
