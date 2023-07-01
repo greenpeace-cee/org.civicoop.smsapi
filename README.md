@@ -3,11 +3,13 @@ SMS API for CiviCRM to send sms through the API
 
 The entity for the SMS API is SMS and the action is Send.
 Parameters for the api are specified below:
-- contact_id: list of contacts IDs to create the PDF Letter (separated by ",")
+- contact_id: list of contacts IDs to send the SMS. (separated by ",")
 - template_id: ID of the message template which will be used in the API.
 - provider_id: ID of the SMS provider
+- activity_id: (**Not required**) Activity ID used for the replacement of activity tokens.
 - from_contact_id: (**Not required**) the contact ID who is sending the sms
-- alternative_receiver_phone_number: enter a phone number who will receive the SMS, if empty the sms is send to the contact
+- alternative_receiver_phone_number: (**Not required**) enter a phone number who will receive the SMS, if empty the sms is send to the contact
+- smarty: Use smarty evaluations ("settings"  is default and follows `CIVICRM_MAIL_SMARTY`, "disable" means never use smarty and "enable" forces the use of smarty.)
 
 # Known Issues
 
