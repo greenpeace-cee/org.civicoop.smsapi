@@ -21,7 +21,7 @@
     <ver>5.46</ver>
   </compatibility>
   <comments>
-    Original developed by http://civicoop.org. Contributed by http://www.ixiam.com
+    Original developed by http://civicoop.org. Contributed by http://www.ixiam.com and https://www.manchestermind.org
   </comments>
   <classloader>
     <psr4 prefix="Civi\" path="Civi"/>
