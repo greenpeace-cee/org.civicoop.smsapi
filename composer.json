@@ -1,5 +1,6 @@
 {
     "name": "civicrm/smsapi",
+    "type": "civicrm-ext",
     "description": "API to send an sms to a contact",
     "license": "AGPL-3.0",
     "authors": [
