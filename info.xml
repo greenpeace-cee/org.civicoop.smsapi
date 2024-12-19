@@ -25,8 +25,16 @@
   </comments>
   <classloader>
     <psr4 prefix="Civi\" path="Civi"/>
+    <psr0 prefix="CRM_" path="."/>
   </classloader>
   <civix>
     <namespace>CRM/Smsapi</namespace>
+    <format>24.09.1</format>
   </civix>
+  <mixins>
+    <mixin>menu-xml@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.3</mixin>
+    <mixin>entity-types-php@2.0.0</mixin>
+  </mixins>
+  <upgrader>CiviMix\Schema\Smsapi\AutomaticUpgrader</upgrader>
 </extension>
